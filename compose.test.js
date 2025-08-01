@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd"
 import { spy } from "@std/testing/mock"
-import { assertInstanceOf } from "jsr:@std/assert/instance-of";
-import { assertEquals } from "jsr:@std/assert/equals";
+import { assertInstanceOf } from "@std/assert/instance-of";
+import { assertEquals } from "@std/assert/equals";
 import { compose } from "../simple-functions/compose.js";
 
 describe('compose', () => {
