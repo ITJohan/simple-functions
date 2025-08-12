@@ -191,3 +191,28 @@
  *  zero: () => Plus<A>
  * } & Alt<A>} Plus
  */
+
+/** level 4 */
+
+/**
+ * 1. `x.ap(f.alt(g))` is equivalent to `x.ap(f).alt(x.ap(g))` (distributivity)
+ * 2. `x.ap(A.zero())` is equivalent to `A.zero()` (annihilation)
+ * @template A
+ * @typedef {Applicative<A> & Plus<A>} Alternative
+ */
+
+/**
+ * 1. `M.chainRec((next, done, v) => p(v) ? d(v).map(done) : n(v).map(next), i)` is equivalent to `(function step(v) { return p(v) ? d(v) : n(v).chain(step); }(i))` (equivalence)
+ * 2. Stack usage of `M.chainRec(f, i)` must be at most a constant multiple of the stack usage of `f` itself.
+ * @template A
+ * @typedef {{
+ *  chainRec: <B, C>(f: (next: () => C, done: () => C, value: A) => ChainRec<C>, i: A) => ChainRec<B>
+ * } & Chain<A>} ChainRec
+ */
+
+/**
+ * 1. `M.of(a).chain(f)` is equivalent to `f(a)` (left identity)
+ * 2. `m.chain(M.of)` is equivalent to `m` (right identity)
+ * @template A
+ * @typedef {Applicative<A> & Chain<A>} Monad
+ */
