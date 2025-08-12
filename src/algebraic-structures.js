@@ -141,6 +141,53 @@
  * 3. `u.traverse(Compose, x => new Compose(x))` is equivalent to `new Compose(u.traverse(F, x => x).map(x => x.traverse(G, x => x)))` for `Compose` defined below and any Applicatives `F` and `G` (composition)
  * @template A
  * @typedef {{
- *  traverse: <B>(f: Applicative, fn: (a: A) => Applicative<B>) => Applicative<Traversable<B>>
+ *  traverse: <B>(f: Applicative<A>, fn: (a: A) => Applicative<B>) => Applicative<Traversable<B>>
  * }} Traversable
+ */
+
+/** Level 3 */
+
+/**
+ * 1. `v.ap(A.of(x => x))` is equivalent to `v` (identity)
+ * 2. `A.of(x).ap(A.of(f))` is equivalent to `A.of(f(x))` (homomorphism)
+ * 3. `A.of(y).ap(u)` is equivalent to `u.ap(A.of(f => f(y)))` (interchange)
+ * @template A
+ * @typedef {{
+ *  of: (a: A) => Applicative<A>
+ * } & Apply<A>} Applicative
+ */
+
+/**
+ * 1. `m.chain(f).chain(g)` is equivalent to `m.chain(x => f(x).chain(g))` (associativity)
+ * @template A
+ * @typedef {{
+ *  chain: <B>(f: (a: A) => Chain<B>) => Chain<B>
+ * } & Apply<A>} Chain
+ */
+
+/**
+ * 1. `w.extend(_w => _w.extract())` is equivalent to `w` (left identity)
+ * 2. `w.extend(f).extract()` is equivalent to `f(w)` (right identity)
+ * @template A
+ * @typedef {{
+ *  extract: () => A
+ * } & Extend<A>} Comonad
+ */
+
+/**
+ * 1. `g.concat(g.invert())` is equivalent to `g.constructor.empty()` (right inverse)
+ * 2. `g.invert().concat(g)` is equivalent to `g.constructor.empty()` (left inverse)
+ * @typedef {{
+ *  invert: () => Group
+ * } & Monoid} Group
+ */
+
+/**
+ * 1. x.alt(A.zero()) is equivalent to x (right identity)
+ * 2. A.zero().alt(x) is equivalent to x (left identity)
+ * 3. A.zero().map(f) is equivalent to A.zero() (annihilation)
+ * @template A
+ * @typedef {{
+ *  zero: () => Plus<A>
+ * } & Alt<A>} Plus
  */
