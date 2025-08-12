@@ -1,2 +1,3 @@
-export * from "./src/compose.js";
-export * from "./src/curry.js";
+export * from "./src/types.js";
+export * from "./src/utils/compose.js";
+export * from "./src/utils/curry.js";
