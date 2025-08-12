@@ -79,7 +79,7 @@
  * 1. `v.ap(u.ap(a.map(f => g => x => f(g(x)))))`  is equivalent to `v.ap(u).ap(a)` (composition)
  * @template A
  * @typedef {{
- *  ap: <B>(x: (Apply<(x: A) => B>)) => Apply<B>
+ *  ap: <B>(x: Apply<(x: A) => B>) => Apply<B>
  * } & Functor<A>} Apply
  */
 
@@ -120,7 +120,7 @@
 /**
  * 1. `a.lte(b)` or `b.lte(a)` (totality)
  * 2. If `a.lte(b)` and `b.lte(a)`, then `a.equals(b)` (antisymmetry)
- * 3. If `a.lte(b)` and b.lte(c), then `a.lte(c)` (transitivity)
+ * 3. If `a.lte(b)` and `b.lte(c)`, then `a.lte(c)` (transitivity)
  * @typedef {{
  *  lte: (x: Ord) => boolean
  * } & Setoid} Ord
@@ -183,9 +183,9 @@
  */
 
 /**
- * 1. x.alt(A.zero()) is equivalent to x (right identity)
- * 2. A.zero().alt(x) is equivalent to x (left identity)
- * 3. A.zero().map(f) is equivalent to A.zero() (annihilation)
+ * 1. `x.alt(A.zero())` is equivalent to `x` (right identity)
+ * 2. `A.zero().alt(x)` is equivalent to `x` (left identity)
+ * 3. `A.zero().map(f)` is equivalent to `A.zero()` (annihilation)
  * @template A
  * @typedef {{
  *  zero: () => Plus<A>
