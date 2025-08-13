@@ -9,7 +9,7 @@
  * 2. `u.contramap(x => f(g(x)))` is equivalent to `u.contramap(f).contramap(g)` (composition)
  * @template A
  * @typedef {{
- *  contramap: <B>(f: (x: B) => A) => Contravariant<B>
+ *  contramap<B>(f: (x: B) => A): Contravariant<B>;
  * }} Contravariant
  */
 
@@ -19,7 +19,7 @@
  * 3. `v.filter(x => false)` is equivalent to `w.filter(x => false)` if `v` and `w` are values of the same Filterable (annihilation)
  * @template A
  * @typedef {{
- *  filter: (p: (x: A) => boolean) => Filterable<A>
+ *  filter(p: (x: A) => boolean): Filterable<A>
  * }} Filterable
  */
 
@@ -27,7 +27,7 @@
  * 1. `u.reduce` is equivalent to `u.reduce((acc, x) => acc.concat([x]), []).reduce`
  * @template A
  * @typedef {{
- *  reduce: <B>(f: (previous: B, current: A) => B, x: B) => B
+ *  reduce<B>(f: (previous: B, current: A) => B, x: B): B
  * }} Foldable
  */
 
@@ -36,14 +36,14 @@
  * 2. `u.map(x => f(g(x)))` is equivalent to `u.map(g).map(f)` (composition)
  * @template A
  * @typedef {{
- *  map: <B>(f: (x: A) => B) => Functor<B>
+ *  map<B>(f: (x: A) => B): Functor<B>;
  * }} Functor
  */
 
 /**
  * 1. `a.concat(b).concat(c)` is equivalent to `a.concat(b.concat(c))` (associativity)
  * @typedef {{
- *  concat: (x: Semigroup) => Semigroup
+ *  concat(x: Semigroup): Semigroup
  * }} Semigroup
  */
 
@@ -51,7 +51,7 @@
  * 1. `a.compose(b).compose(c) === a.compose(b.compose(c))` (associativity)
  * @template I, J
  * @typedef {{
- *  compose: <K>(x: Semigroupoid<J, K>) => Semigroupoid<I, K>
+ *  compose<K>(x: Semigroupoid<J, K>): Semigroupoid<I, K>
  * }} Semigroupoid
  */
 
@@ -60,7 +60,7 @@
  * 2. `a.equals(b) === b.equals(a)` (symmetry)
  * 3. If `a.equals(b)` and `b.equals(c)`, then `a.equals(c)` (transitivity)
  * @typedef {{
- *  equals: (x: Setoid) => boolean;
+ *  equals(x: Setoid): boolean;
  * }} Setoid
  */
 
@@ -71,7 +71,7 @@
  * 2. `a.alt(b).map(f)` is equivalent to `a.map(f).alt(b.map(f))` (distributivity)
  * @template A
  * @typedef {{
- *  alt: (x: Alt<A>) => Alt<A>
+ *  alt(x: Alt<A>): Alt<A>
  * } & Functor<A>} Alt
  */
 
@@ -79,7 +79,7 @@
  * 1. `v.ap(u.ap(a.map(f => g => x => f(g(x)))))`  is equivalent to `v.ap(u).ap(a)` (composition)
  * @template A
  * @typedef {{
- *  ap: <B>(x: Apply<(x: A) => B>) => Apply<B>
+ *  ap<B>(x: Apply<(x: A) => B>): Apply<B>
  * } & Functor<A>} Apply
  */
 
@@ -88,7 +88,7 @@
  * 2. `p.bimap(a => f(g(a)), b => h(i(b)))` is equivalent to `p.bimap(g, i).bimap(f, h)` (composition)
  * @template A, C
  * @typedef {{
- *  bimap: <B,D>(f: (x: A) => B, g: (x: C) => D) => Bifunctor<B, D>
+ *  bimap<B,D>(f: (x: A) => B, g: (x: C) => D): Bifunctor<B, D>
  * } & Functor<A>} Bifunctor
  */
 
@@ -97,7 +97,7 @@
  * 2. `C.id().compose(a)` is equivalent to `a` (left identity)
  * @template A, B
  * @typedef {{
- *  id: () => Category<A, A>
+ *  id(): Category<A, A>
  * } & Semigroupoid<A, B>} Category
  */
 
@@ -105,7 +105,7 @@
  * 1. `w.extend(g).extend(f)` is equivalent to `w.extend(_w => f(_w.extend(g)))`
  * @template A
  * @typedef {{
- *  extend: <B>(f: (x: Extend<A>) => B) => Extend<B>
+ *  extend<B>(f: (x: Extend<A>) => B): Extend<B>
  * } & Functor<A>} Extend
  */
 
@@ -113,7 +113,7 @@
  * 1. `m.concat(M.empty())` is equivalent to `m` (right identity)
  * 2. `M.empty().concat(m)` is equivalent to `m` (left identity)
  * @typedef {{
- *  empty: () => Monoid
+ *  empty(): Monoid
  * } & Semigroup} Monoid
  */
 
@@ -122,7 +122,7 @@
  * 2. If `a.lte(b)` and `b.lte(a)`, then `a.equals(b)` (antisymmetry)
  * 3. If `a.lte(b)` and `b.lte(c)`, then `a.lte(c)` (transitivity)
  * @typedef {{
- *  lte: (x: Ord) => boolean
+ *  lte(x: Ord): boolean
  * } & Setoid} Ord
  */
 
@@ -131,7 +131,7 @@
  * 2. `p.promap(a => f(g(a)), b => h(i(b)))` is equivalent to `p.promap(f, i).promap(g, h)` (composition)
  * @template B, C
  * @typedef {{
- *  promap: <A, D>(f: (x: A) => B, g: (x: C) => D) => Profunctor<A, D>
+ *  promap<A, D>(f: (x: A) => B, g: (x: C) => D): Profunctor<A, D>
  * } & Functor<B>} Profunctor
  */
 
@@ -141,7 +141,7 @@
  * 3. `u.traverse(Compose, x => new Compose(x))` is equivalent to `new Compose(u.traverse(F, x => x).map(x => x.traverse(G, x => x)))` for `Compose` defined below and any Applicatives `F` and `G` (composition)
  * @template A
  * @typedef {{
- *  traverse: <B>(x: Applicative<A>, f: (x: A) => Applicative<B>) => Applicative<Traversable<B>>
+ *  traverse<B>(x: Applicative<A>, f: (x: A) => Applicative<B>): Applicative<Traversable<B>>
  * }} Traversable
  */
 
@@ -152,16 +152,14 @@
  * 2. `A.of(x).ap(A.of(f))` is equivalent to `A.of(f(x))` (homomorphism)
  * 3. `A.of(y).ap(u)` is equivalent to `u.ap(A.of(f => f(y)))` (interchange)
  * @template A
- * @typedef {{
- *  of: (x: A) => Applicative<A>
- * } & Apply<A>} Applicative
+ * @typedef {Apply<A>} Applicative
  */
 
 /**
  * 1. `m.chain(f).chain(g)` is equivalent to `m.chain(x => f(x).chain(g))` (associativity)
  * @template A
  * @typedef {{
- *  chain: <B>(f: (x: A) => Chain<B>) => Chain<B>
+ *  chain<B>(f: (x: A) => Chain<B>): Chain<B>
  * } & Apply<A>} Chain
  */
 
@@ -170,7 +168,7 @@
  * 2. `w.extend(f).extract()` is equivalent to `f(w)` (right identity)
  * @template A
  * @typedef {{
- *  extract: () => A
+ *  extract(): A
  * } & Extend<A>} Comonad
  */
 
@@ -178,7 +176,7 @@
  * 1. `g.concat(g.invert())` is equivalent to `g.constructor.empty()` (right inverse)
  * 2. `g.invert().concat(g)` is equivalent to `g.constructor.empty()` (left inverse)
  * @typedef {{
- *  invert: () => Group
+ *  invert(): Group
  * } & Monoid} Group
  */
 
@@ -188,7 +186,7 @@
  * 3. `A.zero().map(f)` is equivalent to `A.zero()` (annihilation)
  * @template A
  * @typedef {{
- *  zero: () => Plus<A>
+ *  zero(): Plus<A>
  * } & Alt<A>} Plus
  */
 
