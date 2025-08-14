@@ -1,92 +1,73 @@
-/** @import { Functor, Inspectable, Monad, Traversable } from "../types.js" */
+/**
+ * @template T
+ * @typedef {(
+ *  Nothing | Just<T>
+ * )} Maybe
+ */
 
-class Maybe {
-  /**
-   * @template T
-   * @param {T} value
-   */
-  static of(value) {
-    return new Just(value);
-  }
+/**
+ * @template A
+ * @typedef {{
+ *  inspect: () => string;
+ *  map: <B>(f: (x: A) => B) => Maybe<B>;
+ *  ap: <B>(x: Maybe<(x: A) => B>) => Maybe<B>;
+ *  chain: <B>(fn: (x: A) => Maybe<B>) => Maybe<B>;
+ *  isJust: () => boolean;
+ *  isNothing: () => boolean;
+ * }} Just
+ */
 
-  // /**
-  //  * @template U
-  //  * @param {(x: T) => U} f
-  //  */
-  // map(f) {
-  //   return new Maybe(f(this.#value));
-  // }
-
-  // /**
-  //  * @template U
-  //  * @param {Maybe<(a: T) => U>} fn
-  //  * @returns {Maybe<U>}
-  //  */
-  // ap(fn) {
-  //   return this.map(fn.#value);
-  // }
-
-  // /**
-  //  * @template U
-  //  * @param {(x: T) => U} fn
-  //  */
-  // chain(fn) {
-  //   return this.map(fn).join();
-  // }
-
-  // join() {
-  //   return this.#value;
-  // }
-
-  // /**
-  //  * @template U
-  //  * @param {Maybe<T>} x
-  //  * @param {(x: T) => Maybe<U>} fn
-  //  * @returns {Maybe<Traversable<U>>}
-  //  */
-  // traverse(x, fn) {
-  //   return fn(this.#value).map(Maybe.of);
-  // }
-}
+/**
+ * @typedef {{
+ *  inspect: () => string;
+ *  map: () => Nothing;
+ *  ap: () => Nothing;
+ *  chain: () => Nothing;
+ *  isJust: () => boolean;
+ *  isNothing: () => boolean;
+ * }} Nothing
+ */
 
 /**
  * @template T
- * @extends Maybe
- * @implements {Functor<T>}
+ * @param {T} value
+ * @returns {Maybe<T>}
  */
-class Just extends Maybe {
-  #value;
-
-  /**
-   * @param {T} value
-   */
-  constructor(value) {
-    super();
-    this.#value = value;
+export const Maybe = (value) => {
+  if (value === undefined || value === null) {
+    return Nothing();
   }
+  return Just(value);
+};
 
-  inspect() {
-    return `Just(${this.#value})`;
-  }
+/**
+ * @template T
+ * @param {T} value
+ */
+Maybe.of = (value) => Maybe(value);
 
-  /**
-   * @template U
-   * @param {(value: T) => U} fn
-   */
-  map(fn) {
-    return Just.of(fn(this.#value));
-  }
+/**
+ * @template T
+ * @param {T} value
+ * @returns {Just<T>}
+ */
+export const Just = (value) => ({
+  inspect: () => `Just(${value})`,
+  map: (fn) => Maybe.of(fn(value)),
+  ap: (other) => other.map((fn) => fn(value)),
+  chain: (fn) => fn(value),
+  isJust: () => true,
+  isNothing: () => false,
+});
 
-  isJust() {
-    return true;
-  }
-
-  isNothing() {
-    return false;
-  }
-}
-
-class Nothing {
-}
-
-export { Just, Maybe, Nothing };
+/**
+ * @returns {Nothing}
+ */
+export const Nothing = () => ({
+  inspect: () => "Nothing",
+  map: () => Nothing(),
+  ap: () => Nothing(),
+  chain: () => Nothing(),
+  isJust: () => false,
+  isNothing: () => true,
+});

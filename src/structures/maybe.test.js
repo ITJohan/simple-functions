@@ -1,55 +1,28 @@
 import { describe, it } from "@std/testing/bdd";
-import { Just, Maybe, Nothing } from "./maybe.js";
 import { assertEquals } from "@std/assert/equals";
+import { Just, Maybe, Nothing } from "./maybe.js";
 
 describe(Just.name, () => {
   it('should wrap a value and be considered a "Just"', () => {
-    const just = Just.of(123);
+    const just = Just(123);
     assertEquals(just.inspect(), "Just(123)");
     assertEquals(just.isJust(), true);
     assertEquals(just.isNothing(), false);
   });
 
   it('should apply a function to its value using "map"', () => {
-    const just = Just.of(5).map((x) => x * 2);
+    const just = Just(5).map((x) => x * 2);
     assertEquals(just.inspect(), `Just(10)`);
   });
 
-  it('should chain functions that return a Maybe using "chain"', () => {
-    // Applying chain with a function that returns a Just should return that new Just.
-    // Example: Just(5).chain(x => Just(x + 1)) should result in Just(6).
-    // Applying chain with a function that returns Nothing should result in Nothing.
-    // Example: Just(5).chain(x => Nothing) should result in Nothing.
-  });
-
-  it('should return its wrapped value for "getOrElse"', () => {
-    // Calling getOrElse on a Just should ignore the default value and return its own wrapped value.
-    // Example: Just(10).getOrElse(0) should return 10.
-  });
-
-  it('should return the Just instance if the predicate is true for "filter"', () => {
-    // Filtering a Just with a predicate that its value satisfies should return the original Just instance.
-    // Example: Just(10).filter(x => x > 5) should result in Just(10).
-  });
-
-  it('should return Nothing if the predicate is false for "filter"', () => {
-    // Filtering a Just with a predicate that its value does not satisfy should return Nothing.
-    // Example: Just(3).filter(x => x > 5) should result in Nothing.
-  });
-
   it('should apply a function wrapped in a Just using "ap"', () => {
-    // The ap method should apply a function contained within another Just to its own value.
-    // Example: Just(x => x + 5).ap(Just(10)) should result in Just(15).
+    const result = Just(10).ap(Just((/** @type {number} */ x) => x + 5));
+    assertEquals(result.inspect(), "Just(15)");
   });
 
-  it('should return its value when "get" is called (unsafe)', () => {
-    // The get method should return the raw, unwrapped value. This is considered unsafe as it can fail on a Nothing.
-    // Example: Just("hello").get() should return "hello".
-  });
-
-  it('should return a descriptive string for "toString"', () => {
-    // The toString method should provide a clear representation of the Just instance and its value.
-    // Example: Just(42).toString() should return a string like "Just(42)".
+  it('should chain functions that return a Maybe using "chain"', () => {
+    assertEquals(Just(5).chain((x) => Just(x + 1)).inspect(), `Just(6)`);
+    assertEquals(Just(5).chain(Nothing).inspect(), `Nothing`);
   });
 });
 
