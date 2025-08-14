@@ -11,8 +11,8 @@ describe(Just.name, () => {
   });
 
   it('should apply a function to its value using "map"', () => {
-    // Mapping a function over a Just should return a new Just containing the result of applying the function to the original value.
-    // Example: Just(5).map(x => x * 2) should result in Just(10).
+    const just = Just.of(5).map((x) => x * 2);
+    assertEquals(just.inspect(), `Just(10)`);
   });
 
   it('should chain functions that return a Maybe using "chain"', () => {

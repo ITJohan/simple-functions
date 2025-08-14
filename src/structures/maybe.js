@@ -1,4 +1,4 @@
-/** @import { Inspectable, Monad, Traversable } from "../types.js" */
+/** @import { Functor, Inspectable, Monad, Traversable } from "../types.js" */
 
 class Maybe {
   /**
@@ -52,7 +52,7 @@ class Maybe {
 /**
  * @template T
  * @extends Maybe
- * @implements {Inspectable}
+ * @implements {Functor<T>}
  */
 class Just extends Maybe {
   #value;
@@ -67,6 +67,14 @@ class Just extends Maybe {
 
   inspect() {
     return `Just(${this.#value})`;
+  }
+
+  /**
+   * @template U
+   * @param {(value: T) => U} fn
+   */
+  map(fn) {
+    return Just.of(fn(this.#value));
   }
 
   isJust() {
