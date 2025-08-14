@@ -2,6 +2,12 @@
  * Algebraic structures from the Fantasy Land Specification at https://github.com/fantasyland/fantasy-land/blob/master/README.md
  */
 
+/**
+ * @typedef {{
+ *  inspect(): string;
+ * }} Inspectable
+ */
+
 /** Level 1 */
 
 /**
@@ -10,7 +16,7 @@
  * @template A
  * @typedef {{
  *  contramap<B>(f: (x: B) => A): Contravariant<B>;
- * }} Contravariant
+ * } & Inspectable} Contravariant
  */
 
 /**
@@ -20,7 +26,7 @@
  * @template A
  * @typedef {{
  *  filter(p: (x: A) => boolean): Filterable<A>
- * }} Filterable
+ * } & Inspectable} Filterable
  */
 
 /**
@@ -28,7 +34,7 @@
  * @template A
  * @typedef {{
  *  reduce<B>(f: (previous: B, current: A) => B, x: B): B
- * }} Foldable
+ * } & Inspectable} Foldable
  */
 
 /**
@@ -37,14 +43,14 @@
  * @template A
  * @typedef {{
  *  map<B>(f: (x: A) => B): Functor<B>;
- * }} Functor
+ * } & Inspectable} Functor
  */
 
 /**
  * 1. `a.concat(b).concat(c)` is equivalent to `a.concat(b.concat(c))` (associativity)
  * @typedef {{
  *  concat(x: Semigroup): Semigroup
- * }} Semigroup
+ * } & Inspectable} Semigroup
  */
 
 /**
@@ -52,7 +58,7 @@
  * @template I, J
  * @typedef {{
  *  compose<K>(x: Semigroupoid<J, K>): Semigroupoid<I, K>
- * }} Semigroupoid
+ * } & Inspectable} Semigroupoid
  */
 
 /**
@@ -61,7 +67,7 @@
  * 3. If `a.equals(b)` and `b.equals(c)`, then `a.equals(c)` (transitivity)
  * @typedef {{
  *  equals(x: Setoid): boolean;
- * }} Setoid
+ * } & Inspectable} Setoid
  */
 
 /** Level 2 */
