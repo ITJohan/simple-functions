@@ -1,11 +1,13 @@
 import { describe, it } from "@std/testing/bdd";
 import { Just, Maybe, Nothing } from "./maybe.js";
+import { assertEquals } from "@std/assert/equals";
 
 describe(Just.name, () => {
   it('should wrap a value and be considered a "Just"', () => {
-    // A Just instance should correctly store the value it was created with.
-    // isJust() should return true.
-    // isNothing() should return false.
+    const just = Just.of(123);
+    assertEquals(just.inspect(), "Just(123)");
+    assertEquals(just.isJust(), true);
+    assertEquals(just.isNothing(), false);
   });
 
   it('should apply a function to its value using "map"', () => {
