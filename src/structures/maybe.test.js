@@ -1,76 +1,65 @@
 import { describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert/equals";
-import { Just, Maybe, Nothing } from "./maybe.js";
+import { Maybe } from "./maybe.js";
 
-describe(Just.name, () => {
-  it('should wrap a value and be considered a "Just"', () => {
-    const just = Just(123);
-    assertEquals(just.inspect(), "Just(123)");
-    assertEquals(just.isJust(), true);
-    assertEquals(just.isNothing(), false);
+describe(Maybe.name, () => {
+  it("should be Just if wrapping a value", () => {
+    const maybe = Maybe.of(123);
+    assertEquals(maybe.inspect(), "Just(123)");
+    assertEquals(maybe.isJust(), true);
+    assertEquals(maybe.isNothing(), false);
   });
 
-  it('should apply a function to its value using "map"', () => {
-    const just = Just(5).map((x) => x * 2);
-    assertEquals(just.inspect(), `Just(10)`);
+  it("should be Nothing if wrapping a null", () => {
+    const nothing = Maybe.of(null);
+    assertEquals(nothing.inspect(), "Nothing");
+    assertEquals(nothing.isJust(), false);
+    assertEquals(nothing.isNothing(), true);
   });
 
-  it('should apply a function wrapped in a Just using "ap"', () => {
-    const result = Just(10).ap(Just((/** @type {number} */ x) => x + 5));
-    assertEquals(result.inspect(), "Just(15)");
+  it("should be Nothing if wrapping a undefined", () => {
+    const nothing = Maybe.of(undefined);
+    assertEquals(nothing.inspect(), "Nothing");
+    assertEquals(nothing.isJust(), false);
+    assertEquals(nothing.isNothing(), true);
+  });
+
+  it("should apply a function to value using map", () => {
+    const maybe = Maybe.of(5).map((x) => x * 2);
+    assertEquals(maybe.inspect(), `Just(10)`);
+  });
+
+  it("should be Nothing if calling map on Nothing", () => {
+    const maybe = Maybe(null);
+    assertEquals(maybe.map((x) => x * 2).inspect(), "Nothing");
+  });
+
+  it("should apply a function wrapped in a Just using ap", () => {
+    const maybe = Maybe.of(10).ap(Maybe.of((/** @type {number} */ x) => x + 5));
+    assertEquals(maybe.inspect(), "Just(15)");
+  });
+
+  it("should be Nothing when calling ap on Nothing", () => {
+    const maybe = Maybe.of(undefined).ap(
+      Maybe.of((/** @type {number} */ x) => x + 5),
+    );
+    assertEquals(maybe.inspect(), "Nothing");
   });
 
   it('should chain functions that return a Maybe using "chain"', () => {
-    assertEquals(Just(5).chain((x) => Just(x + 1)).inspect(), `Just(6)`);
-    assertEquals(Just(5).chain(Nothing).inspect(), `Nothing`);
-  });
-});
-
-describe(Nothing.name, () => {
-  it('should be considered a "Nothing"', () => {
-    // A Nothing instance should not contain a value.
-    // isJust() should return false.
-    // isNothing() should return true.
+    assertEquals(
+      Maybe.of(5).chain((x) => Maybe.of(x + 1)).inspect(),
+      `Just(6)`,
+    );
   });
 
-  it('should ignore "map" and always return Nothing', () => {
-    // Mapping any function over Nothing should have no effect and return Nothing.
-    // Example: Nothing.map(x => x * 2) should result in Nothing.
+  it("should return Nothing when calling chain on Nothing", () => {
+    assertEquals(
+      Maybe.of(null).chain((x) => Maybe.of(x + 1)).inspect(),
+      "Nothing",
+    );
   });
 
-  it('should ignore "chain" and always return Nothing', () => {
-    // Chaining any function with chain on Nothing should have no effect and return Nothing.
-    // Example: Nothing.chain(x => Just(x + 1)) should result in Nothing.
-  });
-
-  it('should return the default value for "getOrElse"', () => {
-    // Calling getOrElse on Nothing should always return the provided default value.
-    // Example: Nothing.getOrElse("default") should return "default".
-  });
-
-  it('should always return Nothing for "filter"', () => {
-    // Filtering Nothing with any predicate should have no effect and return Nothing.
-    // Example: Nothing.filter(x => x > 5) should result in Nothing.
-  });
-
-  it('should return Nothing when "ap" is called', () => {
-    // Applying a Just containing a function to Nothing should result in Nothing.
-    // Example: Just(x => x + 5).ap(Nothing) should result in Nothing.
-    // Applying Nothing to a Just value should also result in Nothing.
-    // Example: Nothing.ap(Just(10)) should result in Nothing.
-  });
-
-  it('should throw an error when "get" is called (unsafe)', () => {
-    // Attempting to call get on Nothing should throw a specific error, as there is no value to retrieve.
-  });
-
-  it('should return a descriptive string for "toString"', () => {
-    // The toString method should return a simple, clear representation.
-    // Example: Nothing.toString() should return "Nothing".
-  });
-});
-
-describe(Maybe.name, () => {
   it("should adhere to the Functor and Applicative identity law", () => {
     // m.map(x => x) should be equivalent to m.
     // Test with both Just and Nothing.

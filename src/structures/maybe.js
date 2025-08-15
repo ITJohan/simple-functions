@@ -1,73 +1,33 @@
 /**
- * @template T
- * @typedef {(
- *  Nothing | Just<T>
- * )} Maybe
- */
-
-/**
- * @template A
+ * Monad
  * @typedef {{
  *  inspect: () => string;
- *  map: <B>(f: (x: A) => B) => Maybe<B>;
- *  ap: <B>(x: Maybe<(x: A) => B>) => Maybe<B>;
- *  chain: <B>(fn: (x: A) => Maybe<B>) => Maybe<B>;
+ *  map: (fn: (x: any) => any) => Maybe;
+ *  ap: (x: Maybe) => Maybe;
+ *  chain: (fn: (x: any) => Maybe) => Maybe;
  *  isJust: () => boolean;
  *  isNothing: () => boolean;
- * }} Just
+ * }} Maybe
  */
 
 /**
- * @typedef {{
- *  inspect: () => string;
- *  map: () => Nothing;
- *  ap: () => Nothing;
- *  chain: () => Nothing;
- *  isJust: () => boolean;
- *  isNothing: () => boolean;
- * }} Nothing
- */
-
-/**
- * @template T
- * @param {T} value
- * @returns {Maybe<T>}
+ * @param {any} value
+ * @returns {Maybe}
  */
 export const Maybe = (value) => {
-  if (value === undefined || value === null) {
-    return Nothing();
-  }
-  return Just(value);
+  const isNothing = value === undefined || value === null;
+
+  return {
+    inspect: () => isNothing ? "Nothing" : `Just(${value})`,
+    map: (fn) => isNothing ? Maybe.of(value) : Maybe.of(fn(value)),
+    ap: (other) => isNothing ? Maybe.of(value) : other.map((fn) => fn(value)),
+    chain: (fn) => isNothing ? Maybe.of(value) : fn(value),
+    isJust: () => !isNothing,
+    isNothing: () => isNothing,
+  };
 };
 
 /**
- * @template T
- * @param {T} value
+ * @param {any} value
  */
 Maybe.of = (value) => Maybe(value);
-
-/**
- * @template T
- * @param {T} value
- * @returns {Just<T>}
- */
-export const Just = (value) => ({
-  inspect: () => `Just(${value})`,
-  map: (fn) => Maybe.of(fn(value)),
-  ap: (other) => other.map((fn) => fn(value)),
-  chain: (fn) => fn(value),
-  isJust: () => true,
-  isNothing: () => false,
-});
-
-/**
- * @returns {Nothing}
- */
-export const Nothing = () => ({
-  inspect: () => "Nothing",
-  map: () => Nothing(),
-  ap: () => Nothing(),
-  chain: () => Nothing(),
-  isJust: () => false,
-  isNothing: () => true,
-});
