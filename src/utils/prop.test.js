@@ -15,4 +15,12 @@ describe(prop.name, () => {
     assertEquals(a, obj.a);
     assertEquals(b, obj.b);
   });
+
+  it("should return undefined for non-existing props", () => {
+    assertEquals(prop("a")({}), undefined);
+  });
+
+  it("should return specified value in an array", () => {
+    assertEquals(prop(0)([1, 2, 3]), 1);
+  });
 });
