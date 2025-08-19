@@ -30,8 +30,8 @@ describe(Maybe.name, () => {
   });
 
   it("should be Nothing if calling map on Nothing", () => {
-    const maybe = Maybe(null);
-    assertEquals(maybe.map((x) => x * 2).inspect(), "Nothing");
+    const maybe = Maybe(null).map((x) => x * 2);
+    assertEquals(maybe.inspect(), "Nothing");
   });
 
   it("should apply a function wrapped in a Just using ap", () => {
@@ -60,14 +60,58 @@ describe(Maybe.name, () => {
     );
   });
 
-  it("should adhere to the Functor and Applicative identity law", () => {
-    // m.map(x => x) should be equivalent to m.
-    // Test with both Just and Nothing.
+  it("should adhere to the Functor identity law", () => {
+    assertEquals(
+      Maybe.of(null).map((x) => x).inspect(),
+      Maybe.of(null).inspect(),
+    );
+    assertEquals(
+      Maybe.of(null).map((x) => x).inspect(),
+      Maybe.of(null).inspect(),
+    );
   });
 
-  it("should adhere to the Functor and Apply composition law", () => {
-    // m.map(f).map(g) should be equivalent to m.map(x => g(f(x))).
-    // Test with both Just and Nothing.
+  it("should adhere to the Applicative identity law", () => {
+    // assertEquals(
+    //   Maybe.of(null).map((x) => x).inspect(),
+    //   Maybe.of(null).inspect(),
+    // );
+    // assertEquals(
+    //   Maybe.of(null).map((x) => x).inspect(),
+    //   Maybe.of(null).inspect(),
+    // );
+  });
+
+  it("should adhere to the Functor composition law", () => {
+    /** @type {(a: number) => number} */
+    const add2 = (a) => a + 2;
+    /** @type {(a: number) => number} */
+    const multiply2 = (a) => a * 2;
+
+    assertEquals(
+      Maybe.of(5).map(add2).map(multiply2).inspect(),
+      Maybe.of(5).map((x) => multiply2(add2(x))).inspect(),
+    );
+    assertEquals(
+      Maybe.of(null).map(add2).map(multiply2).inspect(),
+      Maybe.of(null).map((x) => multiply2(add2(x))).inspect(),
+    );
+  });
+
+  it("should adhere to the Apply composition law", () => {
+    // /** @type {(a: number) => number} */
+    // const add2 = (a) => a + 2;
+    // /** @type {(a: number) => number} */
+    // const multiply2 = (a) => a * 2;
+
+    // assertEquals(
+    //   Maybe.of(5).map(add2).map(multiply2).inspect(),
+    //   Maybe.of(5).map((x) => multiply2(add2(x))).inspect(),
+    // );
+    // assertEquals(
+    //   Maybe.of(null).map(add2).map(multiply2).inspect(),
+    //   Maybe.of(null).map((x) => multiply2(add2(x))).inspect(),
+    // );
   });
 
   it("should adhere to the Monad left identity law", () => {
