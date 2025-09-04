@@ -1,4 +1,4 @@
-/** @import { Either } from "./either.js" */
+/** @import { Either } from "../types.js" */
 
 import { describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
