@@ -1,4 +1,5 @@
 export * from "./src/types.js";
+export { chain } from "./src/utils/chain.js";
 export { compose } from "./src/utils/compose.js";
 export { curry } from "./src/utils/curry.js";
 export { pipe } from "./src/utils/pipe.js";
