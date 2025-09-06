@@ -5,3 +5,4 @@ export { pipe } from "./src/utils/pipe.js";
 export { prop } from "./src/utils/prop.js";
 export { Either } from "./src/containers/either.js";
 export { Task } from "./src/containers/task.js";
+export { IO } from "./src/containers/io.js";
