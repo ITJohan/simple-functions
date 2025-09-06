@@ -221,24 +221,13 @@
  * Containers
  ****************************/
 /**
- * @template E, A
- * @typedef {object} Left
- * @prop {<B>(fn: (value: A) => B) => Left<E, B>} map
- * @prop {<B>(fn: (value: A) => Either<E, B>) => Left<E, B>} chain
- * @prop {<R>(leftFn: (error: E) => R, rightFn: (value: A) => R) => R} fold
- * @prop {() => E} inspect
- */
-
-/**
- * @template E, A
- * @typedef {object} Right
- * @prop {<B>(fn: (value: A) => B) => Right<E, B>} map
- * @prop {<B>(fn: (value: A) => Either<E, B>) => Either<E, B>} chain
- * @prop {<R>(leftFn: (error: E) => R, rightFn: (value: A) => R) => R} fold
- * @prop {() => A} inspect
- */
-
-/**
- * @template E, A
- * @typedef {Left<E, A> | Right<E, A>} Either
+ * @template L
+ * @template R
+ * @typedef {object} EitherValue<E, A>
+ * @property {boolean} isLeft
+ * @property {boolean} isRight
+ * @property {<B>(fn: (value: R) => B) => EitherValue<L, B>} map
+ * @property {<B>(fn: (value: R) => EitherValue<L, B>) => EitherValue<L, B>} chain
+ * @property {<B>(onLeft: (value: L) => B, onRight: (value: R) => B) => B} fold
+ * @property {() => L | R} inspect
  */
