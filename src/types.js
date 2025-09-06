@@ -216,18 +216,3 @@
  * @template A
  * @typedef {Applicative<A> & Chain<A>} Monad
  */
-
-/*****************************
- * Containers
- ****************************/
-/**
- * @template L
- * @template R
- * @typedef {object} EitherValue<E, A>
- * @property {boolean} isLeft
- * @property {boolean} isRight
- * @property {<B>(fn: (value: R) => B) => EitherValue<L, B>} map
- * @property {<B>(fn: (value: R) => EitherValue<L, B>) => EitherValue<L, B>} chain
- * @property {<B>(onLeft: (value: L) => B, onRight: (value: R) => B) => B} fold
- * @property {() => L | R} inspect
- */
