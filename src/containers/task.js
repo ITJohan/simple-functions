@@ -10,7 +10,6 @@
  * @prop {<B>(fn: (x: A) => B) => Task<E, B>} map
  * @prop {<B>(fn: (x: A) => Task<E, B>) => Task<E, B>} chain
  * @prop {<B>(other: Task<E, (x: A) => B>) => Task<E, B>} ap
- * @prop {(onReject: (error: E) => void, onResolve: (value: A) => void) => void} fold
  */
 
 /**
@@ -37,7 +36,6 @@ const createTask = (computation) => ({
         .then(([fn, val]) => resolve(fn(val)))
         .catch(reject);
     }),
-  fold: (onReject, onResolve) => computation(onReject, onResolve),
 });
 
 /**
