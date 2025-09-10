@@ -1,103 +1,71 @@
 /**
- * Represents a lazy, asynchronous computation that can fail.
- * @template E The error type.
- * @template A The success value type.
+ * @template E, A
+ * @typedef {(reject: (error: E) => void, resolve: (value: A) => void) => void} Computation
  */
-class Task {
-  /**
-   * The core computation, stored as a private field.
-   * It's a function that takes reject and resolve callbacks.
-   * @type {(reject: (x: E) => void, resolve: (x: A) => void) => void}
-   */
-  #fork;
 
-  /**
-   * The constructor is marked as private.
-   * Users should create instances via static methods like Task.of() or Task.fromPromise().
-   * @private
-   * @param {(reject: (x: E) => void, resolve: (x: A) => void) => void} fn
-   */
-  constructor(fn) {
-    this.#fork = fn;
-  }
+/**
+ * @template E, A
+ * @typedef {object} Task
+ * @prop {(reject: (error: E) => void, resolve: (value: A) => void) => void} fork
+ * @prop {<B>(fn: (x: A) => B) => Task<E, B>} map
+ * @prop {<B>(fn: (x: A) => Task<E, B>) => Task<E, B>} chain
+ * @prop {<B>(other: Task<E, (x: A) => B>) => Task<E, B>} ap
+ * @prop {(onReject: (error: E) => void, onResolve: (value: A) => void) => void} fold
+ */
 
-  /**
-   * Creates a Task that immediately resolves with a given value.
-   * @template A
-   * @param {A} x The success value.
-   * @returns {Task<never, A>}
-   */
-  static of(x) {
-    return new Task((_reject, resolve) => resolve(x));
-  }
+/**
+ * @template E, A
+ * @param {Computation<E, A>} computation
+ * @returns {Task<E, A>}
+ */
+const createTask = (computation) => ({
+  fork: (reject, resolve) => computation(reject, resolve),
+  map: (fn) =>
+    createTask((reject, resolve) =>
+      computation(reject, (value) => resolve(fn(value)))
+    ),
+  chain: (fn) =>
+    createTask((reject, resolve) =>
+      computation(reject, (value) => fn(value).fork(reject, resolve))
+    ),
+  ap: (other) =>
+    createTask((reject, resolve) => {
+      Promise.all([
+        new Promise((res, rej) => other.fork(rej, res)),
+        new Promise((res, rej) => computation(rej, res)),
+      ])
+        .then(([fn, val]) => resolve(fn(val)))
+        .catch(reject);
+    }),
+  fold: (onReject, onResolve) => computation(onReject, onResolve),
+});
 
-  /**
-   * Creates a Task that immediately rejects with a given error.
-   * @template E
-   * @param {E} x The error value.
-   * @returns {Task<E, never>}
-   */
-  static rejected(x) {
-    return new Task((reject, _resolve) => reject(x));
-  }
+/**
+ * @template E, A
+ * @param {A} x
+ * @returns {Task<E, A>}
+ */
+const of = (x) => createTask((_reject, resolve) => resolve(x));
 
-  /**
-   * Creates a Task from a function that returns a Promise.
-   * @template A
-   * @param {() => Promise<A>} fn A function that returns a promise, preserving laziness.
-   * @returns {Task<Error, A>}
-   */
-  static fromPromise(fn) {
-    return new Task((reject, resolve) => {
-      fn().then(resolve).catch(reject);
-    });
-  }
+/**
+ * @template E, A
+ * @param {E} x
+ * @returns {Task<E, A>}
+ */
+const rejected = (x) => createTask((reject, _resolve) => reject(x));
 
-  /**
-   * Executes the lazy computation.
-   * @param {(x: E) => void} reject The callback for the failure case.
-   * @param {(x: A) => void} resolve The callback for the success case.
-   */
-  fork(reject, resolve) {
-    this.#fork(reject, resolve);
-  }
+/**
+ * @template E, A
+ * @param {(...args: any[]) => Promise<A>} promise
+ * @returns {(...args: any[]) => Task<E, A>}
+ */
+const fromPromise = (promise) => (...args) =>
+  createTask((reject, resolve) => {
+    promise(...args)
+      .then(resolve)
+      .catch(reject);
+  });
 
-  /**
-   * Transforms the success value of the Task without executing it.
-   * Returns a new Task containing the transformation.
-   * @template B
-   * @param {(value: A) => B} fn The mapping function.
-   * @returns {Task<E, B>}
-   */
-  map(fn) {
-    return new Task((reject, resolve) => {
-      this.#fork(reject, (value) => resolve(fn(value)));
-    });
-  }
+const task = { of, rejected, fromPromise };
 
-  /**
-   * Sequences another asynchronous operation after the current one succeeds.
-   * Returns a new Task representing the complete sequence.
-   * @template B
-   * @param {(value: A) => Task<E, B>} fn The function to generate the next Task.
-   * @returns {Task<E, B>}
-   */
-  chain(fn) {
-    return new Task((reject, resolve) => {
-      this.#fork(reject, (value) => fn(value).fork(reject, resolve));
-    });
-  }
-
-  /**
-   * Executes the Task and returns a standard JavaScript Promise.
-   * This is the bridge to the native async/await world.
-   * @returns {Promise<A>}
-   */
-  run() {
-    return new Promise((resolve, reject) => {
-      this.#fork(reject, resolve);
-    });
-  }
-}
-
-export { Task };
+export { task };
