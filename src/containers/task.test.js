@@ -1,4 +1,4 @@
-/** @import { Task } from "./task.js" */
+/** @import { Task } from "../types.js" */
 
 import { describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
