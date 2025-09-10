@@ -12,10 +12,10 @@ describe(task.of.name, () => {
   });
 
   it("should return a Task<E, A> that can fork to E", () => {
-    const result = task.fromPromise(() =>
-      new Promise((_resolve, reject) => reject(new Error("failure")))
+    const result = task.fromPromise(
+      new Promise((_resolve, reject) => reject(new Error("failure"))),
     );
-    result().fork(
+    result.fork(
       (x) => assertEquals(x.message, "failure"),
       () => {},
     );

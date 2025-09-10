@@ -56,12 +56,12 @@ const rejected = (x) => createTask((reject, _resolve) => reject(x));
 
 /**
  * @template E, A
- * @param {(...args: any[]) => Promise<A>} promise
- * @returns {(...args: any[]) => Task<E, A>}
+ * @param {Promise<A>} promise
+ * @returns {Task<E, A>}
  */
-const fromPromise = (promise) => (...args) =>
+const fromPromise = (promise) =>
   createTask((reject, resolve) => {
-    promise(...args)
+    promise
       .then(resolve)
       .catch(reject);
   });
